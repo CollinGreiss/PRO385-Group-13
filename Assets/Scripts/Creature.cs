@@ -17,8 +17,8 @@ public class Creature
     public string creatureName;
     public int health;
     public int attack;
-    public Card.Area areaType;
-    public Card.Area currentAreaType = Card.Area.empty;
+    public CardArea areaType;
+    public CardArea currentAreaType = CardArea.empty;
     public bool isActive;
     public PlayerArea currentArea;
 

@@ -64,18 +64,18 @@ public class GameManager : MonoBehaviour
         switch (card.cardType)
         {
 
-            case Card.Type.Creature:
+            case CardType.Creature:
                 Creature newCreature = new Creature(card);
                 side.areas[area].creatures.Add(newCreature);
                 Debug.Log($"Played creature: {newCreature.creatureName} in area {area}");
                 break;
 
-            case Card.Type.Spell:
+            case CardType.Spell:
                 // Handle spell logic here
                 Debug.Log($"Played spell: {card.cardName}");
                 break;
 
-            case Card.Type.Landscape:
+            case CardType.Landscape:
                 // Handle landscape logic here
                 Debug.Log($"Played landscape: {card.cardName}");
                 break;

@@ -16,14 +16,14 @@ public class PlayerArea
 {
 
     public List<Creature> creatures = new List<Creature>();
-    private Card.Area AreaType = Card.Area.empty;
+    private CardArea AreaType = CardArea.empty;
 
-    public Card.Area GetAreaType()
+    public CardArea GetAreaType()
     {
         return AreaType;
     }
 
-    public void SetAreaType(Card.Area areaType)
+    public void SetAreaType(CardArea areaType)
     {
         AreaType = areaType;
         foreach (var creature in creatures) creature.currentAreaType = areaType;

@@ -5,9 +5,9 @@ public class PhysicalArea : MonoBehaviour
 {
 
     private List<Creature> creatures;
-    private Card.Area areaType;
+    private CardArea areaType;
 
-    public void SetAreaType(Card.Area newAreaType)
+    public void SetAreaType(CardArea newAreaType)
     {
         areaType = newAreaType;
 

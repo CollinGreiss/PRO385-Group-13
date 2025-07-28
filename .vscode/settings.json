@@ -66,5 +66,5 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj"
     },
-    "dotnet.defaultSolution": "PRO385-Group-13.sln"
+    "dotnet.defaultSolution": "Mobile Ar.sln"
 }

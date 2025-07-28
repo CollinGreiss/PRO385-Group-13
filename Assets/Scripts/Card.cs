@@ -3,26 +3,6 @@ using UnityEngine;
 public class Card
 {
 
-    public enum Type
-    {
-
-        Creature,
-        Spell,
-        Landscape
-
-    }
-
-    public enum Area
-    {
-
-        empty,
-        forest,
-        lava,
-        water,
-        desert
-
-    }
-
 
     public string cardName;
     public string cardDescription;
@@ -30,8 +10,30 @@ public class Card
     public int cardHealth;
     public int cardAttack;
     public int cardCost;
-    public Type cardType;
-    public Area cardArea;
+    public CardType cardType;
+    public CardArea cardArea;
     public bool activeOnPlay = false;
+
+}
+
+
+
+public enum CardType
+{
+
+    Creature,
+    Spell,
+    Landscape
+
+}
+
+public enum CardArea
+{
+
+    empty,
+    forest,
+    lava,
+    water,
+    desert
 
 }
