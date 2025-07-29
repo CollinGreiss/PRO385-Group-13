@@ -121,8 +121,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b5abe9188a905f47a7390c885adbf2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forestVisual: {fileID: 0}
-  lavaVisual: {fileID: 0}
-  waterVisual: {fileID: 0}
-  desertVisual: {fileID: 0}
-  emptyVisual: {fileID: 2539766576933357019}
+  forestPrefab: {fileID: 6257972542852269392, guid: b4bf057f999383442ba6031f3314f97f,
+    type: 3}
+  lavaPrefab: {fileID: 6257972542852269392, guid: a80ecee07f450bd43b168b51d6b6fd25,
+    type: 3}
+  waterPrefab: {fileID: 6257972542852269392, guid: a6055bfa05a80104897b18469b1c76aa,
+    type: 3}
+  desertPrefab: {fileID: 6257972542852269392, guid: ff1b3465e6a64324b88dde09639c8634,
+    type: 3}
+  emptyPrefab: {fileID: 0}
+  visualRoot: {fileID: 0}
+  testAreaType: 0
