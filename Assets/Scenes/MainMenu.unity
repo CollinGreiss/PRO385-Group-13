@@ -608,6 +608,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   board: {fileID: 0}
   turn: -1
+  isReady: 0
+  isRemoteReady: 0
+  arCam: {fileID: 0}
 --- !u!4 &690647456
 Transform:
   m_ObjectHideFlags: 0
@@ -785,8 +788,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0580901cfc2ee5c4d9a329b49cee253a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  port: 7777
-  discoveryPort: 7778
+  port: 12345
+  serverIP: 127.0.0.1
 --- !u!4 &922198001
 Transform:
   m_ObjectHideFlags: 0
@@ -2055,7 +2058,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 209c1d353f621494a9d0042100f83678, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultPanel: {fileID: 0}
+  defaultPanel: {fileID: 1159969400}
   joinPanel: {fileID: 0}
 --- !u!1 &1992057067
 GameObject:
