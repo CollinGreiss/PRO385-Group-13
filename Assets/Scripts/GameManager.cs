@@ -25,10 +25,12 @@ public class GameManager : MonoBehaviour
     public int turn = -1;
 
     public bool isReady = false;
-    public bool isRemoteReady = false;
+    public bool isRemoteReady = true;
 
     public Creature selectedCreature = null;
     public Camera arCam;
+
+    public Card playingCard = null;
 
     int creatureIndex = 0;
 
@@ -62,6 +64,25 @@ public class GameManager : MonoBehaviour
     {
 
         Debug.Log("Tapped: " + hit.transform.name);
+
+        if (playingCard != null)
+        {
+
+            if (hit.transform.TryGetComponent<PlayerArea>(out PlayerArea area))
+            {
+
+                int areaIndex = GetAreaIndex(area);
+                if (areaIndex == -1) return;
+                PlayCard(playingCard, areaIndex);
+                playingCard = null;
+                Debug.Log("Played card: " + playingCard.cardName);
+                board.UpdateBoard();
+                
+            }
+
+            return;
+
+        }
 
         if (selectedCreature == null && hit.transform.TryGetComponent<Creature>(out Creature hitCreature))
         {
@@ -195,6 +216,18 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
+    private int GetAreaIndex(PlayerArea area)
+    {
+
+        for (int i = 0; i < player1Side.areas.Length; i++)
+        {
+            if (player1Side.areas[i] == area) return i;
+        }
+
+        return -1; // Not found
+
+    }
+
     public void PlayCard(Card card, int area)
     {
         if (turn < 0)
@@ -228,7 +261,8 @@ public class GameManager : MonoBehaviour
                 break;
 
             case CardType.Landscape:
-                // Handle landscape logic here
+            
+                side.areas[area].SetAreaType(card.cardArea);
                 Debug.Log($"Played landscape: {card.cardName}");
                 break;
 
@@ -237,26 +271,6 @@ public class GameManager : MonoBehaviour
                 break;
 
         }
-
-        board.UpdateBoard();
-
-        /*
-        Creature newCreature = card.cardName switch
-        {
-            "MageSkeleton" => new MageSkeleton(card),
-            _ => new Creature(card)
-        };
-
-        newCreature.currentArea = targetArea;
-        targetArea.creatures.Add(newCreature);
-
-        newCreature.ApplyAreaEffect();
-
-        bool isPlayer1 = (turn % 2 == 0);
-        board.PlaceCreatureVisual(newCreature, area, isPlayer1);
-
-        Debug.Log($"Played creature: {newCreature.creatureName} in area {area}");
-        */
 
         board.UpdateBoard();
     }
@@ -297,11 +311,23 @@ public class GameManager : MonoBehaviour
         if (!creature.isActive) return;
         NetworkManager.Instance.SendCommand($"MoveCreature:{creature.id}:{targ.GetAreaType()}");
 
+        if (GetAreaIndex(targ) == -1)
+        {
+
+            player2Side.health -= creature.attack;
+            Debug.Log($"{creature.creatureName} attacked the opponent's health directly!");
+            if (player2Side.health <= 0)
+            {
+                Debug.Log("Player 1 wins!");
+            }
+
+        }
+
         creature.currentArea.creatures.Remove(creature);
         creature.currentArea = targ;
         targ.creatures.Add(creature);
         creature.currentAreaType = targ.GetAreaType();
-        
+
 
         creature.isActive = false;
 
@@ -338,6 +364,11 @@ public class GameManager : MonoBehaviour
 
         turn++;
         turn %= 2;
+
+        // Debug
+        turn++;
+        turn %= 2;
+        StartTurn();
 
     }
 

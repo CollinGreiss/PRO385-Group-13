@@ -43,12 +43,53 @@ public class CardDatabase
 
     public static Card[] cards = {
 
-        new Card { cardName = "Forest Guardian", cardDescription = "A powerful creature that protects the forest.", cardImage = null, cardHealth = 5, cardAttack = 3, cardCost = 4, cardType = CardType.Creature, cardArea = CardArea.forest },
-        new Card { cardName = "Lava Burst", cardDescription = "Deals damage to all creatures in the lava area.", cardImage = null, cardHealth = 0, cardAttack = 0, cardCost = 3, cardType = CardType.Spell, cardArea = CardArea.lava },
-        new Card { cardName = "Water Spirit", cardDescription = "A mystical creature that thrives in water.", cardImage = null, cardHealth = 4, cardAttack = 2, cardCost = 3, cardType = CardType.Creature, cardArea = CardArea.water },
-        new Card { cardName = "Desert Mirage", cardDescription = "Creates an illusion in the desert area.", cardImage = null, cardHealth = 0, cardAttack = 0, cardCost = 2, cardType = CardType.Spell, cardArea = CardArea.desert },
+        /* Creatures 
+        Arachnoid,
+        Crab,
+        Devil,
+        FieldFighter,
+        Goblin,
+        Golem,
+        MageSkeleton,
+        MechaTrooper,
+        MinionSkeleton,
+        QuadrupedTank,
+        Skeleton,
+        Turtle,
+        WarriorSkeleton,
+        Whale
+        
+        */
+        
+        new Card { cardName = "Arachnoid", cardDescription = "A creature with eight legs and a venomous bite.", cardImage = null, cardHealth = 3, cardAttack = 2, cardCost = 2, cardType = CardType.Creature, cardArea = CardArea.forest },
+        new Card { cardName = "Crab", cardDescription = "A tough creature with a hard shell.", cardImage = null, cardHealth = 4, cardAttack = 1, cardCost = 3, cardType = CardType.Creature, cardArea = CardArea.water },
+        new Card { cardName = "Devil", cardDescription = "A mischievous creature that causes chaos.", cardImage = null, cardHealth = 2, cardAttack = 3, cardCost = 4, cardType = CardType.Creature, cardArea = CardArea.lava },
+        new Card { cardName = "Field Fighter", cardDescription = "A brave warrior that excels in combat.", cardImage = null, cardHealth = 5, cardAttack = 4, cardCost = 5, cardType = CardType.Creature, cardArea = CardArea.desert },
+        new Card { cardName = "Goblin", cardDescription = "A small, sneaky creature that loves to steal.", cardImage = null, cardHealth = 1, cardAttack = 2, cardCost = 1, cardType = CardType.Creature, cardArea = CardArea.forest },
+        new Card { cardName = "Golem", cardDescription = "A massive creature made of stone.", cardImage = null, cardHealth = 6, cardAttack = 5, cardCost = 6, cardType = CardType.Creature, cardArea = CardArea.lava },
+        new Card { cardName = "Mage Skeleton", cardDescription = "A magical skeleton that casts powerful spells.", cardImage = null, cardHealth = 3, cardAttack = 3, cardCost = 4, cardType = CardType.Creature, cardArea = CardArea.forest },
+        new Card { cardName = "Mecha Trooper", cardDescription = "A robotic soldier with advanced technology.", cardImage = null, cardHealth = 4, cardAttack = 4, cardCost = 5, cardType = CardType.Creature, cardArea = CardArea.desert },
+        new Card { cardName = "Minion Skeleton", cardDescription = "A loyal skeleton that serves its master.", cardImage = null, cardHealth = 2, cardAttack = 1, cardCost = 2, cardType = CardType.Creature, cardArea = CardArea.forest },
+        new Card { cardName = "Quadruped Tank", cardDescription = "A heavily armored creature that charges into battle.", cardImage = null, cardHealth = 7, cardAttack = 6, cardCost = 7, cardType = CardType.Creature, cardArea = CardArea.lava },
+        new Card { cardName = "Skeleton", cardDescription = "A basic skeleton that can be easily defeated.", cardImage = null, cardHealth = 1, cardAttack = 1, cardCost = 1, cardType = CardType.Creature, cardArea = CardArea.forest },
+        new Card { cardName = "Turtle", cardDescription = "A slow but sturdy creature with a protective shell.", cardImage = null, cardHealth = 5, cardAttack = 2, cardCost = 3, cardType = CardType.Creature, cardArea = CardArea.water },
+        new Card { cardName = "Warrior Skeleton", cardDescription = "A skeleton warrior that fights fiercely.", cardImage = null, cardHealth = 3, cardAttack = 4, cardCost = 4, cardType = CardType.Creature, cardArea = CardArea.forest },
+        new Card { cardName = "Whale", cardDescription = "A giant creature of the sea with immense power.", cardImage = null, cardHealth = 8, cardAttack = 7, cardCost = 8, cardType = CardType.Creature, cardArea = CardArea.water },
+
+        /* Spells WIP */
+
+        /* Landscapes 
+        
+        Forest,
+        Lava,
+        Water,
+        Desert
+
+        */
         new Card { cardName = "Forest", cardDescription = "A lush area filled with trees and wildlife.", cardImage = null, cardHealth = 0, cardAttack = 0, cardCost = 0, cardType = CardType.Landscape, cardArea = CardArea.forest },
         new Card { cardName = "Lava", cardDescription = "A dangerous area filled with molten rock.", cardImage = null, cardHealth = 0, cardAttack = 0, cardCost = 0, cardType = CardType.Landscape, cardArea = CardArea.lava },
+        new Card { cardName = "Water", cardDescription = "A serene area filled with lakes and rivers.", cardImage = null, cardHealth = 0, cardAttack = 0, cardCost = 0, cardType = CardType.Landscape, cardArea = CardArea.water },
+        new Card { cardName = "Desert", cardDescription = "A vast area filled with sand and heat.", cardImage = null, cardHealth = 0, cardAttack = 0, cardCost = 0, cardType = CardType.Landscape, cardArea = CardArea.desert }
 
     };
 
