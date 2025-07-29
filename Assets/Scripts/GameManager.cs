@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
 
     public static GameManager Instance { get; private set; }
 
-     void Awake()
+    void Awake()
     {
         if (Instance == null)
         {
@@ -22,6 +23,85 @@ public class GameManager : MonoBehaviour
     public PlayerSide player2Side;
 
     public int turn = -1;
+
+    public bool isReady = false;
+    public bool isRemoteReady = false;
+
+    public Creature selectedCreature = null;
+    public Camera arCam;
+
+    int creatureIndex = 0;
+
+    private void Start()
+    {
+
+        NetworkManager.Instance.CommandReceived += OnCommandReceived;
+        arCam = Camera.main;
+
+    }
+
+    
+
+    void Update()
+    {
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            
+            if (EventSystem.current.IsPointerOverGameObject()) return;
+            Ray debugRay = arCam.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(debugRay, out RaycastHit mouseHit)) CheckHit(mouseHit);
+
+            return;
+        }
+
+        if (Input.touchCount == 0 || Input.GetTouch(0).phase != TouchPhase.Began) return;
+
+        if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
+
+        Ray ray = arCam.ScreenPointToRay(Input.GetTouch(0).position);
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+
+            CheckHit(hit);
+
+        }
+
+    }
+
+    void CheckHit(RaycastHit hit)
+    {
+
+        Debug.Log("Tapped: " + hit.transform.name);
+
+        if (selectedCreature == null && hit.transform.TryGetComponent<Creature>(out Creature hitCreature))
+        {
+
+            selectedCreature = hitCreature;
+            Debug.Log("Selected Creature: " + selectedCreature.creatureName);
+
+        }
+        else if (selectedCreature == null) return;
+
+        // Creature selected, now check for action
+
+        if (hit.transform.TryGetComponent<Creature>(out Creature targetCreature))
+        {
+
+            GameManager.Instance.ActivateCreatureAttack(selectedCreature, targetCreature);
+
+        }
+        else if (hit.transform.TryGetComponent<PlayerArea>(out PlayerArea targetArea))
+        {
+
+            GameManager.Instance.ActivateCreatureMove(selectedCreature, targetArea);
+
+        }
+
+        selectedCreature = null;
+
+    }
 
     public void InitializeGame()
     {
@@ -49,6 +129,84 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void IsReadyToStart()
+    {
+
+        NetworkManager.Instance.SendCommand("GameReady");
+        isReady = true;
+        if (isRemoteReady) InitializeGame();
+
+    }
+
+    public void OnCommandReceived(string command)
+    {
+
+        PlayerSide side = turn % 2 == 0 ? player1Side : player2Side;
+
+        switch (command.Substring(0, command.IndexOf(':')))
+        {
+            case "GameReady":
+                isRemoteReady = true;
+                if (isReady) InitializeGame();
+                break;
+
+            case "PlayCard":
+                string[] parts = command.Split(':');
+                if (parts.Length < 3) return;
+
+                string cardName = parts[1];
+                int areaIndex = int.Parse(parts[2]);
+
+                Card card = CardDatabase.GetCardByName(cardName);
+                if (card == null) return;
+
+                PlayCard(card, areaIndex);
+                break;
+
+            case "MoveCreature":
+                string[] moveParts = command.Split(':');
+                if (moveParts.Length < 3) return;
+
+                int creatureId = int.Parse(moveParts[1]);
+                int targetAreaIndex = int.Parse(moveParts[2]);
+
+                Creature creature = FindCreatureById(creatureId);
+                if (creature == null) return;
+
+                PlayerArea targetArea = side.areas[targetAreaIndex];
+                if (targetArea == null) return;
+
+                ActivateCreatureMove(creature, targetArea);
+                break;
+
+            default:
+                Debug.LogWarning($"Unknown command received: {command}");
+                break;
+        }
+
+    }
+
+    private Creature FindCreatureById(int id)
+    {
+        foreach (var area in player1Side.areas)
+        {
+            foreach (var creature in area.creatures)
+            {
+                if (creature.id == id) return creature;
+            }
+        }
+
+        foreach (var area in player2Side.areas)
+        {
+            foreach (var creature in area.creatures)
+            {
+                if (creature.id == id) return creature;
+            }
+        }
+
+        return null;
+    }
+
     public void PlayCard(Card card, int area)
     {
         if (turn < 0)
@@ -60,6 +218,41 @@ public class GameManager : MonoBehaviour
         PlayerSide side = turn % 2 == 0 ? player1Side : player2Side;
         PlayerArea targetArea = side.areas[area];
 
+        if (side.power < card.cardCost) return;
+        side.power -= card.cardCost;
+
+        NetworkManager.Instance.SendCommand($"PlayCard:{card.cardName}:{area}");
+
+
+        switch (card.cardType)
+        {
+
+            case CardType.Creature:
+
+                Creature newCreature = new Creature(card, creatureIndex++);
+                side.areas[area].creatures.Add(newCreature);
+                Debug.Log($"Played creature: {newCreature.creatureName} in area {area}");
+                break;
+
+            case CardType.Spell:
+                // Handle spell logic here
+                Debug.Log($"Played spell: {card.cardName}");
+                break;
+
+            case CardType.Landscape:
+                // Handle landscape logic here
+                Debug.Log($"Played landscape: {card.cardName}");
+                break;
+
+            default:
+                Debug.LogWarning("Unknown card type!");
+                break;
+
+        }
+
+        board.UpdateBoard();
+
+        /*
         Creature newCreature = card.cardName switch
         {
             "MageSkeleton" => new MageSkeleton(card),
@@ -75,6 +268,7 @@ public class GameManager : MonoBehaviour
         board.PlaceCreatureVisual(newCreature, area, isPlayer1);
 
         Debug.Log($"Played creature: {newCreature.creatureName} in area {area}");
+        */
 
         board.UpdateBoard();
     }
@@ -113,11 +307,13 @@ public class GameManager : MonoBehaviour
     {
 
         if (!creature.isActive) return;
+        NetworkManager.Instance.SendCommand($"MoveCreature:{creature.id}:{targ.GetAreaType()}");
 
         creature.currentArea.creatures.Remove(creature);
         creature.currentArea = targ;
         targ.creatures.Add(creature);
         creature.currentAreaType = targ.GetAreaType();
+        
 
         creature.isActive = false;
 
@@ -127,6 +323,8 @@ public class GameManager : MonoBehaviour
     {
 
         if (!attacker.isActive) return;
+        NetworkManager.Instance.SendCommand($"AttackCreature:{attacker.id}:{defender.id}");
+
         defender.health -= attacker.attack;
         attacker.health -= defender.attack;
 
