@@ -49,4 +49,4 @@ AR Card Wars is designed for casual and competitive two-player matches. The game
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/CGreiss/PRO385-Group-13
+   git clone https://github.com/CollinGreiss/PRO385-Group-13
