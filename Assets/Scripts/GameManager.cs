@@ -58,35 +58,56 @@ public class GameManager : MonoBehaviour
         }
 
         PlayerSide side = turn % 2 == 0 ? player1Side : player2Side;
+        PlayerArea targetArea = side.areas[area];
 
-        switch (card.cardType)
+        Creature newCreature = card.cardName switch
         {
+            "MageSkeleton" => new MageSkeleton(card),
+            _ => new Creature(card)
+        };
 
-            case CardType.Creature:
-                Creature newCreature = new Creature(card);
-                side.areas[area].creatures.Add(newCreature);
-                Debug.Log($"Played creature: {newCreature.creatureName} in area {area}");
-                break;
+        newCreature.currentArea = targetArea;
+        targetArea.creatures.Add(newCreature);
 
-            case CardType.Spell:
-                // Handle spell logic here
-                Debug.Log($"Played spell: {card.cardName}");
-                break;
+        newCreature.ApplyAreaEffect();
 
-            case CardType.Landscape:
-                // Handle landscape logic here
-                Debug.Log($"Played landscape: {card.cardName}");
-                break;
+        bool isPlayer1 = (turn % 2 == 0);
+        board.PlaceCreatureVisual(newCreature, area, isPlayer1);
 
-            default:
-                Debug.LogWarning("Unknown card type!");
-                break;
-
-        }
+        Debug.Log($"Played creature: {newCreature.creatureName} in area {area}");
 
         board.UpdateBoard();
-
     }
+
+    public void PlaceCreatureVisual(Creature creature, int areaIndex, bool isPlayer1)
+    {
+        GameObject prefab = GetCreaturePrefab(creature.creatureName);
+        if (prefab == null)
+        {
+            Debug.LogWarning($"No prefab for creature: {creature.creatureName}");
+            return;
+        }
+
+        PhysicalArea area = isPlayer1 ? board.player1Areas[areaIndex] : board.player2Areas[areaIndex];
+        Transform parent = area.visualRoot != null ? area.visualRoot : area.transform;
+
+        GameObject instance = GameObject.Instantiate(prefab, parent);
+
+        instance.transform.localPosition = new Vector3(0, 0.5f, 0); // adjust as needed
+        instance.transform.localRotation = Quaternion.identity;
+    }
+
+    private GameObject GetCreaturePrefab(string creatureName)
+    {
+        foreach (CreatureVisualMapping go in board.creaturePrefabs)
+        {
+            if (go.creatureName == creatureName)
+                return go.creaturePrefab;
+        }
+        return null;
+    }
+
+
 
     public void ActivateCreatureMove(Creature creature, PlayerArea targ)
     {

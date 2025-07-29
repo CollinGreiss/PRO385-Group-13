@@ -164,7 +164,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 4676763484768707567, guid: da7465be533848244b6dc36869a1245d,
     type: 3}
   visualRoot: {fileID: 1063290621720255054}
-  testAreaType: 0
+  selectedCreatureIndex: -1
 --- !u!1 &2021986534951740105
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,7 +298,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 1122218584719882342, guid: 4f8427f1ac5ec8f43aec5d37cbfc9d5d,
     type: 3}
   visualRoot: {fileID: 1998719266116480041}
-  testAreaType: 0
+  selectedCreatureIndex: -1
 --- !u!1 &2867837710280564397
 GameObject:
   m_ObjectHideFlags: 0
@@ -463,7 +463,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 6257972542852269392, guid: a9277e6557afe5145aa18c0c58b11430,
     type: 3}
   visualRoot: {fileID: 6406361261471942286}
-  testAreaType: 0
+  selectedCreatureIndex: -1
 --- !u!1 &5083885942760141171
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,6 +588,15 @@ MonoBehaviour:
   - {fileID: 363210310856414139}
   - {fileID: 8947683797438571973}
   - {fileID: 4448247913256312522}
+  creaturePrefabs:
+  - creatureName: MageSkeleton
+    creaturePrefab: {fileID: 3520995218212704576, guid: b0399c01fc89b5a47819634a29f9782b,
+      type: 3}
+    creatureAreaType: 1
+  - creatureName: MageSkeletonnn
+    creaturePrefab: {fileID: 3520995218212704576, guid: b0399c01fc89b5a47819634a29f9782b,
+      type: 3}
+    creatureAreaType: 3
 --- !u!1 &6889887979263241058
 GameObject:
   m_ObjectHideFlags: 0
@@ -752,7 +761,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 2539766576933357019, guid: bcdddbebfeba9b64c887d97c97055b29,
     type: 3}
   visualRoot: {fileID: 8997597808007498748}
-  testAreaType: 0
+  selectedCreatureIndex: -1
 --- !u!1 &7433114663262509001
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,6 +1086,11 @@ PrefabInstance:
         type: 3}
       propertyPath: testAreaType
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747567599329412846, guid: bcdddbebfeba9b64c887d97c97055b29,
+        type: 3}
+      propertyPath: selectedCreatureIndex
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 1044370604805143394, guid: bcdddbebfeba9b64c887d97c97055b29,
         type: 3}

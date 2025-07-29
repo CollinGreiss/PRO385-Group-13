@@ -4,6 +4,14 @@ using UnityEngine;
 public class Creature
 {
 
+    public string creatureName;
+    public int health;
+    public int attack;
+    public CardArea areaType;
+    public CardArea currentAreaType = CardArea.empty;
+    public bool isActive;
+    public PlayerArea currentArea;
+
     public Creature(Card card)
     {
         creatureName = card.cardName;
@@ -14,14 +22,10 @@ public class Creature
         isActive = card.activeOnPlay;
     }
 
-    public string creatureName;
-    public int health;
-    public int attack;
-    public CardArea areaType;
-    public CardArea currentAreaType = CardArea.empty;
-    public bool isActive;
-    public PlayerArea currentArea;
-
+    public virtual void ApplyAreaEffect()
+    {
+        // Default: no effect
+    }
 
     public void DisplayInfo()
     {
