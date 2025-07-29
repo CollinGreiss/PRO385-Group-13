@@ -6,16 +6,14 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
 
-    void Awake()
+     void Awake()
     {
-
-        if (Instance != null && Instance != this)
+        if (Instance == null)
         {
-            Destroy(gameObject);
-            return;
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        Instance = this;
-        
+        else Destroy(gameObject);
     }
 
     public Board board;
@@ -37,7 +35,7 @@ public class GameManager : MonoBehaviour
             player1Side.areas[i] = new PlayerArea();
             player2Side.areas[i] = new PlayerArea();
         }
-        
+
         board = FindFirstObjectByType<Board>();
         if (board == null)
         {
