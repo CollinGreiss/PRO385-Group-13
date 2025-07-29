@@ -3,9 +3,8 @@ using UnityEngine;
 
 public class PhysicalArea : MonoBehaviour
 {
-
-    private List<Creature> creatures;
     private CardArea areaType;
+    private List<Creature> creatures;
 
     [Header("Prefabs for Each Area Type")]
     public GameObject forestPrefab;
@@ -20,6 +19,14 @@ public class PhysicalArea : MonoBehaviour
     private Dictionary<CardArea, GameObject> prefabMap;
     private GameObject currentVisualInstance;
 
+    [Header("Creature Visual")]
+    [Tooltip("Select creature prefab index to display")]
+    public int selectedCreatureIndex = -1;
+
+    private GameObject currentCreatureInstance;
+
+    private Board board; // reference to Board
+
     void Awake()
     {
         prefabMap = new Dictionary<CardArea, GameObject>
@@ -31,13 +38,15 @@ public class PhysicalArea : MonoBehaviour
             { CardArea.empty, emptyPrefab },
         };
 
-        // Optional: if you want to initialize visual at start
-        // SetAreaType(areaType);
+        board = FindFirstObjectByType<Board>();
+
+        UpdateVisual();
+        UpdateCreatureVisualAndAreaType();
     }
 
     public void SetAreaType(CardArea newAreaType)
     {
-        if (areaType == newAreaType) return; // no change needed
+        if (areaType == newAreaType) return;
         areaType = newAreaType;
         UpdateVisual();
     }
@@ -49,41 +58,84 @@ public class PhysicalArea : MonoBehaviour
 
     private void UpdateVisual()
     {
-        // Destroy the previous visual instance properly (using Destroy for runtime)
         if (currentVisualInstance != null)
         {
-            Destroy(currentVisualInstance);
+            if (Application.isPlaying)
+                Destroy(currentVisualInstance);
+            else
+                DestroyImmediate(currentVisualInstance);
         }
 
         if (prefabMap.TryGetValue(areaType, out GameObject prefab) && prefab != null)
         {
-            // Decide where to instantiate: under visualRoot if assigned, else as child of this object
             Transform parent = visualRoot != null ? visualRoot : this.transform;
 
             currentVisualInstance = Instantiate(prefab, parent);
-
-            // Reset position & rotation relative to parent
             currentVisualInstance.transform.localPosition = Vector3.zero;
             currentVisualInstance.transform.localRotation = Quaternion.identity;
-
-            // Optional: reset scale if needed
             currentVisualInstance.transform.localScale = Vector3.one;
         }
     }
 
+    private void UpdateCreatureVisualAndAreaType()
+    {
+        // Destroy old creature visual
+        if (currentCreatureInstance != null)
+        {
+            if (Application.isPlaying)
+                Destroy(currentCreatureInstance);
+            else
+                DestroyImmediate(currentCreatureInstance);
+        }
+
+        // Handle no board or no creature list
+        if (board == null || board.creaturePrefabs == null || board.creaturePrefabs.Length == 0)
+        {
+            SetAreaType(CardArea.empty);
+            return;
+        }
+
+        // Handle invalid index (less than 0 or beyond bounds)
+        if (selectedCreatureIndex < 0 || selectedCreatureIndex >= board.creaturePrefabs.Length)
+        {
+            SetAreaType(CardArea.empty);
+            return;
+        }
+
+        var mapping = board.creaturePrefabs[selectedCreatureIndex];
+
+        // Handle empty slot in the list
+        if (mapping == null || mapping.creaturePrefab == null)
+        {
+            SetAreaType(CardArea.empty);
+            return;
+        }
+
+        // Update area type to match the creature
+        SetAreaType(mapping.creatureAreaType);
+
+        // Instantiate creature visual
+        Transform parent = visualRoot != null ? visualRoot : this.transform;
+        currentCreatureInstance = Instantiate(mapping.creaturePrefab, parent);
+        currentCreatureInstance.transform.localPosition = new Vector3(0, 0.5f, 0);
+        currentCreatureInstance.transform.localRotation = Quaternion.identity;
+        currentCreatureInstance.transform.localScale = new Vector3(0.35f, 1f, 0.35f);
+    }
+
+
+
 #if UNITY_EDITOR
-    [Header("Editor Testing")]
-    public CardArea testAreaType = CardArea.empty;
-    private CardArea lastTestAreaType = CardArea.empty;
+    private int lastSelectedCreatureIndex = -1;
 
     void OnValidate()
     {
-        if (testAreaType != lastTestAreaType)
+        board = FindFirstObjectByType<Board>();
+
+        if (selectedCreatureIndex != lastSelectedCreatureIndex)
         {
-            lastTestAreaType = testAreaType;
-            SetAreaType(testAreaType);
+            lastSelectedCreatureIndex = selectedCreatureIndex;
+            UpdateCreatureVisualAndAreaType();
         }
     }
 #endif
-
 }

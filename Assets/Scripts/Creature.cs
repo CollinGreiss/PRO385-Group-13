@@ -23,7 +23,11 @@ public class Creature
     public bool isActive;
     public PlayerArea currentArea;
     public int id;
-
+	
+    public virtual void ApplyAreaEffect()
+    {
+        // Default: no effect
+    }
 
     public void DisplayInfo()
     {

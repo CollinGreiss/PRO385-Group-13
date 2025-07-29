@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Board : MonoBehaviour
@@ -5,6 +6,19 @@ public class Board : MonoBehaviour
     
     public PhysicalArea[] player1Areas;
     public PhysicalArea[] player2Areas;
+
+    public CreatureVisualMapping[] creaturePrefabs;
+    private Dictionary<string, GameObject> creaturePrefabDict;
+
+    void Awake()
+    {
+        creaturePrefabDict = new Dictionary<string, GameObject>();
+        foreach (var mapping in creaturePrefabs)
+        {
+            if (!creaturePrefabDict.ContainsKey(mapping.creatureName))
+                creaturePrefabDict.Add(mapping.creatureName, mapping.creaturePrefab);
+        }
+    }
 
     public void UpdateBoard()
     {
@@ -27,6 +41,25 @@ public class Board : MonoBehaviour
             player2Areas[i].SetCreatures(player2.areas[i].creatures);
         }
 
+    }
+
+    public void PlaceCreatureVisual(Creature creature, int areaIndex, bool isPlayer1)
+    {
+        if (!creaturePrefabDict.TryGetValue(creature.creatureName, out GameObject prefab))
+        {
+            Debug.LogWarning($"No prefab assigned for creature: {creature.creatureName}");
+            return;
+        }
+
+        PhysicalArea targetArea = isPlayer1 ? player1Areas[areaIndex] : player2Areas[areaIndex];
+
+        // Instantiate under the visual root or default
+        Transform parent = targetArea.visualRoot != null ? targetArea.visualRoot : targetArea.transform;
+        GameObject instance = Instantiate(prefab, parent);
+
+        // Optionally position it nicely
+        instance.transform.localPosition = new Vector3(0, 0.5f, 0); // adjust height or layout
+        instance.transform.localRotation = Quaternion.identity;
     }
 
 }

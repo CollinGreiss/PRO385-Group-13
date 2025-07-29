@@ -164,7 +164,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 4676763484768707567, guid: da7465be533848244b6dc36869a1245d,
     type: 3}
   visualRoot: {fileID: 1063290621720255054}
-  testAreaType: 0
+  selectedCreatureIndex: -1
 --- !u!1 &2021986534951740105
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,7 +298,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 1122218584719882342, guid: 4f8427f1ac5ec8f43aec5d37cbfc9d5d,
     type: 3}
   visualRoot: {fileID: 1998719266116480041}
-  testAreaType: 0
+  selectedCreatureIndex: -1
 --- !u!1 &2867837710280564397
 GameObject:
   m_ObjectHideFlags: 0
@@ -463,7 +463,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 6257972542852269392, guid: a9277e6557afe5145aa18c0c58b11430,
     type: 3}
   visualRoot: {fileID: 6406361261471942286}
-  testAreaType: 0
+  selectedCreatureIndex: -1
 --- !u!1 &5083885942760141171
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,6 +588,63 @@ MonoBehaviour:
   - {fileID: 363210310856414139}
   - {fileID: 8947683797438571973}
   - {fileID: 4448247913256312522}
+  creaturePrefabs:
+  - creatureName: MageSkeleton
+    creaturePrefab: {fileID: 3520995218212704576, guid: b0399c01fc89b5a47819634a29f9782b,
+      type: 3}
+    creatureAreaType: 1
+  - creatureName: Golem
+    creaturePrefab: {fileID: 7948002561425576607, guid: 4e8d9055a191710408e1d9e72e14b37d,
+      type: 3}
+    creatureAreaType: 1
+  - creatureName: Goblin
+    creaturePrefab: {fileID: 3155909186652843758, guid: 9f6717640d92e2745afbd03af3d71f0e,
+      type: 3}
+    creatureAreaType: 1
+  - creatureName: MinionSkeleton
+    creaturePrefab: {fileID: 7032550197681583792, guid: 6c86312b2c3778c4791d27982756ba38,
+      type: 3}
+    creatureAreaType: 4
+  - creatureName: Skeleton
+    creaturePrefab: {fileID: 7989878969553736639, guid: 58add201b4b00464cb8aa1833e6daeb1,
+      type: 3}
+    creatureAreaType: 4
+  - creatureName: FieldFighter
+    creaturePrefab: {fileID: 4904906067757958009, guid: bb849fb1a85c43445b7194d407be7e9c,
+      type: 3}
+    creatureAreaType: 4
+  - creatureName: Quadruped
+    creaturePrefab: {fileID: 5028197992759857610, guid: f9a8c91777df9d849951ebde1e3ac4b8,
+      type: 3}
+    creatureAreaType: 4
+  - creatureName: WarriorSkeleton
+    creaturePrefab: {fileID: 111880764758315100, guid: a955979b8f30f8044beb47d2049e5bce,
+      type: 3}
+    creatureAreaType: 2
+  - creatureName: Devil
+    creaturePrefab: {fileID: 3098032295913033252, guid: 1a77ded7f328add4ab96d8787d243a8f,
+      type: 3}
+    creatureAreaType: 2
+  - creatureName: MechaTrooper
+    creaturePrefab: {fileID: 4012539604738816264, guid: 268c536a47bde7b4ea63c1b5c696934f,
+      type: 3}
+    creatureAreaType: 2
+  - creatureName: Arachnoid
+    creaturePrefab: {fileID: 1444413181058771036, guid: 367c5af20f9deee4399607811371b8d1,
+      type: 3}
+    creatureAreaType: 3
+  - creatureName: Crab
+    creaturePrefab: {fileID: 1703797159401048030, guid: 9322e1593bb0cf64e8991f924a8ff7a6,
+      type: 3}
+    creatureAreaType: 3
+  - creatureName: Turtle
+    creaturePrefab: {fileID: 5072255082969086022, guid: b58679992b5b2b6499e31b12efa3adf3,
+      type: 3}
+    creatureAreaType: 3
+  - creatureName: Whale
+    creaturePrefab: {fileID: 7205058873528018284, guid: 231a5c5208566d2499aebacae6b4d617,
+      type: 3}
+    creatureAreaType: 3
 --- !u!1 &6889887979263241058
 GameObject:
   m_ObjectHideFlags: 0
@@ -752,7 +809,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 2539766576933357019, guid: bcdddbebfeba9b64c887d97c97055b29,
     type: 3}
   visualRoot: {fileID: 8997597808007498748}
-  testAreaType: 0
+  selectedCreatureIndex: -1
 --- !u!1 &7433114663262509001
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,6 +1134,11 @@ PrefabInstance:
         type: 3}
       propertyPath: testAreaType
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747567599329412846, guid: bcdddbebfeba9b64c887d97c97055b29,
+        type: 3}
+      propertyPath: selectedCreatureIndex
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 1044370604805143394, guid: bcdddbebfeba9b64c887d97c97055b29,
         type: 3}
