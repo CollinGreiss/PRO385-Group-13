@@ -13,7 +13,7 @@ public class NetworkManager : MonoBehaviour
 
     public static NetworkManager Instance { get; private set; }
 
-     void Awake()
+    void Awake()
     {
         if (Instance == null)
         {
@@ -31,6 +31,7 @@ public class NetworkManager : MonoBehaviour
     private LANClient client;
     private bool isHost = false;
     private bool isClient = false;
+    public event Action<string> CommandReceived;
 
     void Start()
     {
@@ -69,7 +70,7 @@ public class NetworkManager : MonoBehaviour
 
     }
 
-    void SendCommand(string command)
+    public void SendCommand(string command)
     {
 
         if (string.IsNullOrEmpty(command)) return;
@@ -110,6 +111,7 @@ public class NetworkManager : MonoBehaviour
     void OnCommandReceived(string command, string senderId)
     {
         Debug.Log($"Received from {senderId}: {command}");
+        CommandReceived?.Invoke(command);
     }
 
 

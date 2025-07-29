@@ -8,9 +8,10 @@ using UnityEngine.XR.ARSubsystems;
 public class ARPlaceObject : MonoBehaviour
 {
     [SerializeField] private ARRaycastManager raycastManager;
-    [SerializeField] private GameObject[] prefabs;
+    [SerializeField] private GameObject gameBoard;
 
     bool isPlacing = false;
+    bool placed = false;
 
     void Start() {
 
@@ -41,16 +42,22 @@ public class ARPlaceObject : MonoBehaviour
 
     void PlaceObject(Vector2 position) {
 
-        if (!raycastManager || prefabs.Length == 0) return;
+        if (placed || !raycastManager || gameBoard == null) return;
 
+
+        //Debug.Log(placed);
         var rayHits = new List<ARRaycastHit>();
         raycastManager.Raycast(position, rayHits, TrackableType.PlaneWithinPolygon);
 
-        if (rayHits.Count > 0) {
+        if (rayHits.Count > 0)
+        {
 
+            //placed = true;
             Vector3 hitPosePosition = rayHits[0].pose.position;
             Quaternion hitPoseRotation = rayHits[0].pose.rotation;
-            Instantiate(prefabs[Random.Range(0, prefabs.Length)], hitPosePosition, hitPoseRotation);
+            Instantiate(gameBoard, hitPosePosition, hitPoseRotation);
+            
+            GameManager.Instance.IsReadyToStart();
 
         }
 

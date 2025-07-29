@@ -4,7 +4,7 @@ using UnityEngine;
 public class Creature
 {
 
-    public Creature(Card card)
+    public Creature(Card card, int id)
     {
         creatureName = card.cardName;
         health = card.cardHealth;
@@ -12,6 +12,7 @@ public class Creature
         areaType = card.cardArea;
         currentAreaType = areaType;
         isActive = card.activeOnPlay;
+        this.id = id;
     }
 
     public string creatureName;
@@ -21,6 +22,7 @@ public class Creature
     public CardArea currentAreaType = CardArea.empty;
     public bool isActive;
     public PlayerArea currentArea;
+    public int id;
 
 
     public void DisplayInfo()
