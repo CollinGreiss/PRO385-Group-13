@@ -1,18 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.UI;
 
-// Main networking manager - attach this to a GameObject in your scene
 public class NetworkManager : MonoBehaviour
 {
 
     public static NetworkManager Instance { get; private set; }
-
     void Awake()
     {
         if (Instance == null)
@@ -24,431 +20,218 @@ public class NetworkManager : MonoBehaviour
     }
 
     [Header("Network Settings")]
-    public int port = 7777;
-    public int discoveryPort = 7778;
+    public int port = 12345;
+    public string serverIP = "10.10.15.38"; // localhost for testing
 
-    private LANHost host;
-    private LANClient client;
-    private bool isHost = false;
-    private bool isClient = false;
+    private TcpListener server;
+    private TcpClient client;
+    private NetworkStream stream;
+    private Thread serverThread;
+    private Thread clientThread;
+    private bool isServer = false;
+    private bool isConnected = false;
+
     public event Action<string> CommandReceived;
 
-    void Start()
-    {
-    }
-
-    public void StartHost()
-    {
-        if (isHost || isClient) return;
-
-        host = new LANHost(port, discoveryPort);
-        host.OnClientConnected += OnClientConnected;
-        host.OnClientDisconnected += OnClientDisconnected;
-        host.OnCommandReceived += OnCommandReceived;
-        host.StartHost();
-
-        isHost = true;
-        
-        Debug.Log("Host started");
-        
-    }
-
-    public void StartClient()
-    {
-
-        if (isHost || isClient) return;
-
-        client = new LANClient(port, discoveryPort);
-        client.OnConnectedToHost += OnConnectedToHost;
-        client.OnDisconnectedFromHost += OnDisconnectedFromHost;
-        client.OnCommandReceived += OnCommandReceived;
-        client.StartClient();
-
-        isClient = true;
-
-        Debug.Log("Client started, searching for host");
-
-    }
-
-    public void SendCommand(string command)
-    {
-
-        if (string.IsNullOrEmpty(command)) return;
-
-        if (isHost && host != null)
-        {
-            host.SendCommandToClients(command);
-            Debug.Log($"Host sent: {command}");
-        }
-        else if (isClient && client != null)
-        {
-            client.SendCommandToHost(command);
-            Debug.Log($"Client sent: {command}");
-        }
-    }
-
-    // Event handlers
-    void OnClientConnected(string clientId)
-    {
-        Debug.Log($"Client connected: {clientId}");
-    }
-
-    void OnClientDisconnected(string clientId)
-    {
-        Debug.Log($"Client disconnected: {clientId}");
-    }
-
-    void OnConnectedToHost()
-    {
-        Debug.Log("Connected to host");
-    }
-
-    void OnDisconnectedFromHost()
-    {
-        Debug.Log("Disconnected from host");
-    }
-
-    void OnCommandReceived(string command, string senderId)
-    {
-        Debug.Log($"Received from {senderId}: {command}");
-        CommandReceived?.Invoke(command);
-    }
-
-
-    void OnDestroy()
-    {
-        host?.Stop();
-        client?.Stop();
-    }
-}
-
-// Host implementation
-public class LANHost
-{
-    public event Action<string> OnClientConnected;
-    public event Action<string> OnClientDisconnected;
-    public event Action<string, string> OnCommandReceived;
-
-    private TcpListener tcpListener;
-    private UdpClient udpBroadcaster;
-    private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
-    private bool isRunning = false;
-    private int port;
-    private int discoveryPort;
-    private Thread broadcastThread;
-    private Thread clientListenerThread;
-
-    public LANHost(int port, int discoveryPort)
-    {
-        this.port = port;
-        this.discoveryPort = discoveryPort;
-    }
 
     public void StartHost()
     {
         try
         {
-            // Start TCP listener for clients
-            tcpListener = new TcpListener(IPAddress.Any, port);
-            tcpListener.Start();
+            isServer = true;
+            server = new TcpListener(IPAddress.Any, port);
+            server.Start();
 
-            // Start UDP broadcaster for discovery
-            udpBroadcaster = new UdpClient(discoveryPort);
-            udpBroadcaster.EnableBroadcast = true;
+            Debug.Log("Server started, waiting for connection...");
 
-            isRunning = true;
+            serverThread = new Thread(ServerLoop);
+            serverThread.Start();
 
-            // Start threads
-            broadcastThread = new Thread(BroadcastLoop);
-            broadcastThread.Start();
-
-            clientListenerThread = new Thread(ClientListenerLoop);
-            clientListenerThread.Start();
         }
         catch (Exception e)
         {
-            Debug.LogError($"Failed to start host: {e.Message}");
+            Debug.Log($"Server error: {e.Message}");
         }
-    }
-
-    void BroadcastLoop()
-    {
-        byte[] data = Encoding.UTF8.GetBytes($"HOST_AVAILABLE:{port}");
-        IPEndPoint broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, discoveryPort);
-
-        while (isRunning)
-        {
-            try
-            {
-                udpBroadcaster.Send(data, data.Length, broadcastEndpoint);
-                Thread.Sleep(1000); // Broadcast every second
-            }
-            catch (Exception e)
-            {
-                if (isRunning)
-                    Debug.LogError($"Broadcast error: {e.Message}");
-            }
-        }
-    }
-
-    void ClientListenerLoop()
-    {
-        while (isRunning)
-        {
-            try
-            {
-                TcpClient newClient = tcpListener.AcceptTcpClient();
-                string clientId = Guid.NewGuid().ToString("N")[..8];
-                clients[clientId] = newClient;
-
-                OnClientConnected?.Invoke(clientId);
-
-                // Start handling this client
-                Thread clientThread = new Thread(() => HandleClient(clientId, newClient));
-                clientThread.Start();
-            }
-            catch (Exception e)
-            {
-                if (isRunning)
-                    Debug.LogError($"Client listener error: {e.Message}");
-            }
-        }
-    }
-
-    void HandleClient(string clientId, TcpClient client)
-    {
-        NetworkStream stream = client.GetStream();
-        byte[] buffer = new byte[1024];
-
-        try
-        {
-            while (isRunning && client.Connected)
-            {
-                int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                if (bytesRead > 0)
-                {
-                    string command = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    OnCommandReceived?.Invoke(command, clientId);
-                }
-                else
-                {
-                    break; // Client disconnected
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Client handling error: {e.Message}");
-        }
-        finally
-        {
-            clients.Remove(clientId);
-            client.Close();
-            OnClientDisconnected?.Invoke(clientId);
-        }
-    }
-
-    public void SendCommandToClients(string command)
-    {
-        byte[] data = Encoding.UTF8.GetBytes(command);
-        List<string> disconnectedClients = new List<string>();
-
-        foreach (var kvp in clients)
-        {
-            try
-            {
-                if (kvp.Value.Connected)
-                {
-                    NetworkStream stream = kvp.Value.GetStream();
-                    stream.Write(data, 0, data.Length);
-                    stream.Flush();
-                }
-                else
-                {
-                    disconnectedClients.Add(kvp.Key);
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Failed to send to client {kvp.Key}: {e.Message}");
-                disconnectedClients.Add(kvp.Key);
-            }
-        }
-
-        // Clean up disconnected clients
-        foreach (string clientId in disconnectedClients)
-        {
-            clients.Remove(clientId);
-            OnClientDisconnected?.Invoke(clientId);
-        }
-    }
-
-    public void Stop()
-    {
-        isRunning = false;
-
-        tcpListener?.Stop();
-        udpBroadcaster?.Close();
-
-        foreach (var client in clients.Values)
-        {
-            client.Close();
-        }
-        clients.Clear();
-
-        broadcastThread?.Join(1000);
-        clientListenerThread?.Join(1000);
-    }
-}
-
-// Client implementation
-public class LANClient
-{
-    public event Action OnConnectedToHost;
-    public event Action OnDisconnectedFromHost;
-    public event Action<string, string> OnCommandReceived;
-
-    private TcpClient tcpClient;
-    private UdpClient udpListener;
-    private NetworkStream stream;
-    private bool isRunning = false;
-    private bool isConnected = false;
-    private int port;
-    private int discoveryPort;
-    private Thread discoveryThread;
-    private Thread messageThread;
-
-    public LANClient(int port, int discoveryPort)
-    {
-        this.port = port;
-        this.discoveryPort = discoveryPort;
     }
 
     public void StartClient()
     {
         try
         {
-            udpListener = new UdpClient(discoveryPort);
-            isRunning = true;
+            client = new TcpClient();
+            client.Connect(serverIP, port);
+            stream = client.GetStream();
 
-            discoveryThread = new Thread(DiscoveryLoop);
-            discoveryThread.Start();
+            Debug.Log("Connected to server!");
+            isConnected = true;
+
+            clientThread = new Thread(ClientLoop);
+            clientThread.Start();
+
         }
         catch (Exception e)
         {
-            Debug.LogError($"Failed to start client: {e.Message}");
+            Debug.Log($"Connection error: {e.Message}");
         }
     }
 
-    void DiscoveryLoop()
+    private void ServerLoop()
     {
-        IPEndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, discoveryPort);
-
-        while (isRunning && !isConnected)
+        try
         {
-            try
+            using (TcpClient serverClient = server.AcceptTcpClient())
             {
-                byte[] data = udpListener.Receive(ref remoteEndpoint);
-                string message = Encoding.UTF8.GetString(data);
+                Debug.Log("Client connected!");
+                stream = serverClient.GetStream();
+                isConnected = true;
 
-                if (message.StartsWith("HOST_AVAILABLE:"))
+                /* Enable send button on main thread
+                UnityMainThreadDispatcher.Instance.Enqueue(() => {
+                    sendButton.interactable = true;
+                });
+                */
+
+                byte[] buffer = new byte[1024];
+                while (isConnected && serverClient.Connected)
                 {
-                    string[] parts = message.Split(':');
-                    if (parts.Length == 2 && int.TryParse(parts[1], out int hostPort))
+                    try
                     {
-                        ConnectToHost(remoteEndpoint.Address, hostPort);
+                        int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                        if (bytesRead > 0)
+                        {
+                            string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                            {
+                                Debug.Log($"Client: {message}");
+                                CommandReceived?.Invoke(message);
+                            });
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                        {
+                            Debug.Log($"Read error: {e.Message}");
+                        });
                         break;
                     }
                 }
             }
-            catch (Exception e)
-            {
-                if (isRunning)
-                    Debug.LogError($"Discovery error: {e.Message}");
-                Thread.Sleep(100);
-            }
-        }
-    }
-
-    void ConnectToHost(IPAddress hostAddress, int hostPort)
-    {
-        try
-        {
-            tcpClient = new TcpClient();
-            tcpClient.Connect(hostAddress, hostPort);
-            stream = tcpClient.GetStream();
-
-            isConnected = true;
-            OnConnectedToHost?.Invoke();
-
-            // Start message handling thread
-            messageThread = new Thread(MessageLoop);
-            messageThread.Start();
         }
         catch (Exception e)
         {
-            Debug.LogError($"Failed to connect to host: {e.Message}");
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+            {
+                Debug.Log($"Server error: {e.Message}");
+            });
         }
     }
 
-    void MessageLoop()
+    private void ClientLoop()
     {
         byte[] buffer = new byte[1024];
-
-        try
+        while (isConnected && client.Connected)
         {
-            while (isRunning && isConnected && tcpClient.Connected)
+            try
             {
                 int bytesRead = stream.Read(buffer, 0, buffer.Length);
                 if (bytesRead > 0)
                 {
-                    string command = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    OnCommandReceived?.Invoke(command, "Host");
-                }
-                else
-                {
-                    break; // Host disconnected
+                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                    {
+                        Debug.Log($"Server: {message}");
+                        CommandReceived?.Invoke(message);
+                    });
                 }
             }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Message loop error: {e.Message}");
-        }
-        finally
-        {
-            isConnected = false;
-            OnDisconnectedFromHost?.Invoke();
+            catch (Exception e)
+            {
+                UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                {
+                    Debug.Log($"Read error: {e.Message}");
+                });
+                break;
+            }
         }
     }
 
-    public void SendCommandToHost(string command)
+    public void SendCommand(string message)
     {
         if (!isConnected || stream == null) return;
 
+        if (string.IsNullOrEmpty(message)) return;
+
         try
         {
-            byte[] data = Encoding.UTF8.GetBytes(command);
+            byte[] data = Encoding.UTF8.GetBytes(message);
             stream.Write(data, 0, data.Length);
-            stream.Flush();
+
+            string sender = isServer ? "You (Server)" : "You (Client)";
+            Debug.Log($"{sender}: {message}");
+
         }
         catch (Exception e)
         {
-            Debug.LogError($"Failed to send command to host: {e.Message}");
-            isConnected = false;
-            OnDisconnectedFromHost?.Invoke();
+            Debug.LogError($"Send error: {e.Message}");
         }
     }
 
-    public void Stop()
+    private void OnDestroy()
     {
-        isRunning = false;
         isConnected = false;
 
-        tcpClient?.Close();
-        udpListener?.Close();
+        if (serverThread != null && serverThread.IsAlive)
+            serverThread.Abort();
+        if (clientThread != null && clientThread.IsAlive)
+            clientThread.Abort();
 
-        discoveryThread?.Join(1000);
-        messageThread?.Join(1000);
+        if (stream != null)
+            stream.Close();
+        if (client != null)
+            client.Close();
+        if (server != null)
+            server.Stop();
+    }
+}
+
+// Helper class for threading
+public class UnityMainThreadDispatcher : MonoBehaviour
+{
+    private static UnityMainThreadDispatcher _instance;
+    public static UnityMainThreadDispatcher Instance => _instance;
+
+    private System.Collections.Generic.Queue<System.Action> _executionQueue = new System.Collections.Generic.Queue<System.Action>();
+
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void Update()
+    {
+        lock (_executionQueue)
+        {
+            while (_executionQueue.Count > 0)
+            {
+                _executionQueue.Dequeue().Invoke();
+            }
+        }
+    }
+
+    public void Enqueue(System.Action action)
+    {
+        lock (_executionQueue)
+        {
+            _executionQueue.Enqueue(action);
+        }
     }
 }
