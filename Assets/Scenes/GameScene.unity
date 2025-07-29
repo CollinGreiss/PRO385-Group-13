@@ -753,7 +753,7 @@ MonoBehaviour:
       m_Calls: []
   m_PlanePrefab: {fileID: 7856160522608965636, guid: c2aa0b32785b4b3439deb62bda5eb72a,
     type: 3}
-  m_DetectionMode: -1
+  m_DetectionMode: 1
 --- !u!114 &2512387470422636671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -783,7 +783,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   raycastManager: {fileID: 2512387470422636671}
-  gameBoard: {fileID: 0}
+  gameBoard: {fileID: 5639684935995714046, guid: 3d0079ba8dc54c645b34e2c85fef2af8,
+    type: 3}
+  planeManager: {fileID: 2512387470422636670}
 --- !u!4 &2512387470860572925
 Transform:
   m_ObjectHideFlags: 0

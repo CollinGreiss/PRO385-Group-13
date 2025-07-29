@@ -40,20 +40,8 @@ public class GameManager : MonoBehaviour
 
     }
 
-    
-
     void Update()
     {
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            
-            if (EventSystem.current.IsPointerOverGameObject()) return;
-            Ray debugRay = arCam.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(debugRay, out RaycastHit mouseHit)) CheckHit(mouseHit);
-
-            return;
-        }
 
         if (Input.touchCount == 0 || Input.GetTouch(0).phase != TouchPhase.Began) return;
 
