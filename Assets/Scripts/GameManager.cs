@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -7,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
 
     public static GameManager Instance { get; private set; }
+    public NetworkManager networkManager;
 
     void Awake()
     {
@@ -35,11 +37,13 @@ public class GameManager : MonoBehaviour
 
     int creatureIndex = 0;
 
+    bool isHost = true;
+
     private void Start()
     {
 
-        NetworkManager.Instance.CommandReceived += OnCommandReceived;
         arCam = Camera.main;
+        networkManager = GetComponent<NetworkManager>();
 
     }
 
@@ -125,10 +129,20 @@ public class GameManager : MonoBehaviour
     public void IsReadyToStart()
     {
 
-        NetworkManager.Instance.SendCommand("GameReady");
         isReady = true;
+        SendCommand(isHost, "GameReady");
         if (isRemoteReady) InitializeGame();
 
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void SendCommand(bool hostIsSender, string command)
+    {
+
+        if (isHost && hostIsSender) return; // If host is sending, skip processing on host side
+        if (!isHost && !hostIsSender) return; // If client is sending, skip processing on client side
+        OnCommandReceived(command);
+        
     }
 
     public void OnCommandReceived(string command)
@@ -220,13 +234,13 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        SendCommand(isHost, "PlayCard:" + card.cardName + ":" + area);
+
         PlayerSide side = turn % 2 == 0 ? player1Side : player2Side;
         PlayerArea targetArea = side.areas[area];
 
         if (side.power < card.cardCost) return;
         side.power -= card.cardCost;
-
-        // NetworkManager.Instance.SendCommand($"PlayCard:{card.cardName}:{area}");
 
         switch (card.cardType)
         {
@@ -290,7 +304,8 @@ public class GameManager : MonoBehaviour
     {
 
         if (!creature.isActive) return;
-        NetworkManager.Instance.SendCommand($"MoveCreature:{creature.id}:{targ.GetAreaType()}");
+
+        SendCommand(isHost, "ActivateCreatureMove:" + creature.id + ":" + GetAreaIndex(targ));
 
         if (GetAreaIndex(targ) == -1)
         {
@@ -318,7 +333,8 @@ public class GameManager : MonoBehaviour
     {
 
         if (!attacker.isActive) return;
-        NetworkManager.Instance.SendCommand($"AttackCreature:{attacker.id}:{defender.id}");
+
+        SendCommand(isHost, "ActivateCreatureAttack:" + attacker.id + ":" + defender.id);
 
         defender.health -= attacker.attack;
         attacker.health -= defender.attack;
