@@ -215,7 +215,7 @@ public class GameManager : MonoBehaviour
     {
         if (turn < 0)
         {
-            Debug.LogError("Game not initialized. Call InitializeGame() first.");
+            Debug.LogError("Game not initialized.");
             return;
         }
 
@@ -227,36 +227,33 @@ public class GameManager : MonoBehaviour
 
         NetworkManager.Instance.SendCommand($"PlayCard:{card.cardName}:{area}");
 
-
         switch (card.cardType)
         {
-
             case CardType.Creature:
-
                 Creature newCreature = new Creature(card, creatureIndex++);
-                side.areas[area].creatures.Add(newCreature);
-                Debug.Log($"Played creature: {newCreature.creatureName} in area {area}");
-                break;
+                targetArea.creatures.Add(newCreature);
+                newCreature.currentArea = targetArea;
 
-            case CardType.Spell:
-                // Handle spell logic here
-                Debug.Log($"Played spell: {card.cardName}");
+                // Place creature visual
+                board.PlaceCreatureVisual(newCreature, area, turn % 2 == 0);
                 break;
 
             case CardType.Landscape:
 
                 side.areas[area].SetAreaType(card.cardArea);
                 Debug.Log($"Played landscape: {card.cardName}");
+                targetArea.SetAreaType(card.cardArea);
+                board.UpdateBoard(); // to refresh area visuals
                 break;
 
-            default:
-                Debug.LogWarning("Unknown card type!");
+            case CardType.Spell:
+                Debug.Log($"Played spell: {card.cardName}");
                 break;
-
         }
 
         board.UpdateBoard();
     }
+
 
     public void PlaceCreatureVisual(Creature creature, int areaIndex, bool isPlayer1)
     {
