@@ -59,6 +59,9 @@ public class Board : MonoBehaviour
         instance.transform.localPosition = new Vector3(0, 0.5f, 0);
         instance.transform.localRotation = Quaternion.identity;
         instance.transform.localScale = mapping.prefabScale;
+
+        creature.currentVisualInstance = instance;
+
     }
 
 
