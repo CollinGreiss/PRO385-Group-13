@@ -2790,12 +2790,12 @@ MonoBehaviour:
     creaturePrefab: {fileID: 3520995218212704576, guid: b0399c01fc89b5a47819634a29f9782b,
       type: 3}
     creatureAreaType: 1
-    prefabScale: {x: 0.25, y: 0.5, z: 0.25}
+    prefabScale: {x: 1, y: 1, z: 1}
   - creatureName: Golem
     creaturePrefab: {fileID: 7948002561425576607, guid: 4e8d9055a191710408e1d9e72e14b37d,
       type: 3}
     creatureAreaType: 1
-    prefabScale: {x: 0.35, y: 1, z: 0.35}
+    prefabScale: {x: 1, y: 1, z: 1}
   - creatureName: Goblin
     creaturePrefab: {fileID: 3155909186652843758, guid: 9f6717640d92e2745afbd03af3d71f0e,
       type: 3}
