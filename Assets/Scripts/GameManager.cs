@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -42,24 +43,6 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void Update()
-    {
-
-        if (Input.touchCount == 0 || Input.GetTouch(0).phase != TouchPhase.Began) return;
-
-        if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
-
-        Ray ray = arCam.ScreenPointToRay(Input.GetTouch(0).position);
-
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-
-            CheckHit(hit);
-
-        }
-
-    }
-
     void CheckHit(RaycastHit hit)
     {
 
@@ -77,7 +60,7 @@ public class GameManager : MonoBehaviour
                 playingCard = null;
                 Debug.Log("Played card: " + playingCard.cardName);
                 board.UpdateBoard();
-                
+
             }
 
             return;
@@ -261,7 +244,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case CardType.Landscape:
-            
+
                 side.areas[area].SetAreaType(card.cardArea);
                 Debug.Log($"Played landscape: {card.cardName}");
                 break;

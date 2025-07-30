@@ -60,16 +60,15 @@ public class PhysicalArea : MonoBehaviour
     {
         if (currentVisualInstance != null)
         {
-            if (Application.isPlaying)
-                Destroy(currentVisualInstance);
-            else
-                DestroyImmediate(currentVisualInstance);
+            if (Application.isPlaying) Destroy(currentVisualInstance);
+            else DestroyImmediate(currentVisualInstance);
         }
 
         if (prefabMap.TryGetValue(areaType, out GameObject prefab) && prefab != null)
         {
             Transform parent = visualRoot != null ? visualRoot : this.transform;
-
+            transform.gameObject.TryGetComponent<MeshRenderer>(out MeshRenderer meshRenderer);
+            meshRenderer.enabled = false;
             currentVisualInstance = Instantiate(prefab, parent);
             currentVisualInstance.transform.localPosition = Vector3.zero;
             currentVisualInstance.transform.localRotation = Quaternion.identity;
@@ -82,10 +81,8 @@ public class PhysicalArea : MonoBehaviour
         // Destroy old creature visual
         if (currentCreatureInstance != null)
         {
-            if (Application.isPlaying)
-                Destroy(currentCreatureInstance);
-            else
-                DestroyImmediate(currentCreatureInstance);
+            if (Application.isPlaying) Destroy(currentCreatureInstance);
+            else DestroyImmediate(currentCreatureInstance);
         }
 
         // Handle no board or no creature list

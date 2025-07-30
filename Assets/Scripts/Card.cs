@@ -105,4 +105,11 @@ public class CardDatabase
         return null;
     }
 
+    public static Card GetRandomCard()
+    {
+        if (cards.Length == 0) return null;
+        int randomIndex = Random.Range(0, cards.Length);
+        return cards[randomIndex];
+    }  
+
 }

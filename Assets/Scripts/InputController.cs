@@ -40,7 +40,6 @@ public class ARPlaceObject : MonoBehaviour
 
             isPlacing = true;
             Vector2 mousePos = Mouse.current.position.ReadValue();
-            Debug.Log(Mouse.current);
             PlaceObject(mousePos);
 
         }

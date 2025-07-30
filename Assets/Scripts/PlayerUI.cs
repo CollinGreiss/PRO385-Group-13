@@ -37,10 +37,27 @@ public class PlayerUI : MonoBehaviour
 
         if (manaSlider != null)
         {
-            manaSlider.maxValue = 10; // You can dynamically set this based on your game logic
+            manaSlider.maxValue = GameManager.Instance.turn / 2 + 3; // You can dynamically set this based on your game logic
             manaSlider.value = player.power;
             if (manaText != null)
                 manaText.text = $"MP: {player.power}";
         }
     }
+
+    public void endTurnButtonClicked()
+    {
+        GameManager gm = GameManager.Instance;
+        if (gm != null) gm.EndTurn();
+    }
+
+    public void debugCardClicked()
+    {
+
+        var card = CardDatabase.GetRandomCard();
+        Debug.Log($"Debug Card: {card.cardName}");
+        GameManager.Instance.playingCard = card;
+        Debug.Log($"Debug Card Clicked: {card.cardName}");
+
+    }
+
 }
