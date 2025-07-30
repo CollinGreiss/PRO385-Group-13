@@ -14,7 +14,25 @@ public class BCReader : MonoBehaviour
     [SerializeField] private float scanInterval = 0.5f;
     [SerializeField] private Texture2D debugTexture;
     [SerializeField] private Material debugMaterial;
-    
+    [SerializeField] private GameManager manager;
+
+string[] validCards = {
+        "Arachnoid",
+        "Crab",
+        "Devil",
+        "FieldFighter",
+        "Goblin",
+        "Golem",
+        "MageSkeleton",
+        "MechaTrooper",
+        "MinionSkeleton",
+        "QuadrupedTank",
+        "Skeleton",
+        "Turtle",
+        "WarriorSkeleton",
+        "Whale"
+    };
+
 
     private IBarcodeReader barcodeReader;
     private float lastScanTime;
@@ -33,6 +51,12 @@ public class BCReader : MonoBehaviour
             TryInverted = true,
             PossibleFormats = new[] { BarcodeFormat.QR_CODE }
         };
+
+        // Replace this line in Start():
+        // var GameManager = GameObject.FindObjectOfType<GameManager>();
+
+        manager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
     }
 
     // Update is called once per frame
@@ -86,9 +110,23 @@ public class BCReader : MonoBehaviour
 
         var result = barcodeReader.Decode(pixels, texture.width, texture.height);
 
-        if (result != null) Debug.Log(result.Text);
+        if (result != null)
+        {
+            Debug.Log(result.Text);
+            if (Array.Exists(validCards, card => card.Equals(result.Text, StringComparison.OrdinalIgnoreCase)))
+            {
+                Debug.Log("Valid card detected: " + result.Text);
+                // Here you can handle the valid card detection, e.g., add it to the player's hand
+                GameManager.Instance.playingCard = CardDatabase.GetCardByName(result.Text);
+                Debug.Log("Current Playing Card is " + GameManager.Instance.playingCard.cardName);
+            }
+            else
+            {
+                Debug.LogWarning("Invalid card detected: " + result.Text);
+            }
+        }
 
-        lastScanTime = Time.time;
+            lastScanTime = Time.time;
 
         // If debugPlane is set, update its texture and position
 
