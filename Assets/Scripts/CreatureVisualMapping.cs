@@ -8,4 +8,6 @@ public class CreatureVisualMapping
     public GameObject creaturePrefab;
     public CardArea creatureAreaType;
     public Vector3 prefabScale = new Vector3(1f, 1f, 1f);
+    public int creatureId;
+
 }

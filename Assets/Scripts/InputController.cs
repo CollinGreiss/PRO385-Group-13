@@ -69,8 +69,7 @@ public class ARPlaceObject : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(mousePos);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
-                GameManager.Instance.CheckHit(hit);
+            if (Physics.Raycast(ray, out hit)) GameManager.Instance.CheckHit(hit);
             else Debug.Log("No hit detected");
 
         }

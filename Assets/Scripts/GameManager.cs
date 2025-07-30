@@ -1,9 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -75,6 +72,14 @@ public class GameManager : MonoBehaviour
 
 
         var creature = FindCreatureByVisual(hit.transform.gameObject);
+
+        if (creature == selectedCreature)
+        {
+            
+            selectedCreature = null;
+            return;
+
+        }
 
         if (selectedCreature == null && creature != null)
         {
@@ -334,9 +339,6 @@ public class GameManager : MonoBehaviour
 
         SendCommand(isHost, "ActivateCreatureMove:" + creature.id + ":" + GetAreaIndex(targ));
 
-        Debug.Log($"player1Side.areas.Contains(targ): {player1Side.areas.Contains(targ)}");
-        Debug.Log($"player2Side.areas.Contains(targ): {player2Side.areas.Contains(targ)}");
-
 
         if (turn % 2 == 0 ? player2Side.areas.Contains(targ) : player1Side.areas.Contains(targ))
         {
@@ -365,18 +367,24 @@ public class GameManager : MonoBehaviour
         SendCommand(isHost, "ActivateCreatureAttack:" + attacker.id + ":" + defender.id);
 
         defender.health -= attacker.attack;
+        if (defender.currentAreaType == defender.areaType) attacker.health -= defender.attack;
+
         attacker.health -= defender.attack;
+        if (attacker.currentAreaType == attacker.areaType) defender.health -= attacker.attack;
+
+        Debug.Log($"{attacker.creatureName} attacked {defender.creatureName}!");
+        Debug.Log($"{attacker.creatureName} Health: {attacker.health}, {defender.creatureName} Health: {defender.health}");
 
         if (defender.health <= 0)
         {
+            Destroy(defender.currentVisualInstance);
             defender.currentArea.creatures.Remove(defender);
-            Debug.Log($"{defender.creatureName} has been defeated!");
         }
 
         if (attacker.health <= 0)
         {
+            Destroy(attacker.currentVisualInstance);
             attacker.currentArea.creatures.Remove(attacker);
-            Debug.Log($"{attacker.creatureName} has been defeated!");
         }
 
         attacker.isActive = false;
@@ -386,19 +394,23 @@ public class GameManager : MonoBehaviour
 
     public void EndTurn()
     {
-
         playingCard = null;
-        foreach (var area in player1Side.areas)
-        {
-            foreach (var creature in area.creatures)
-            {
-                creature.isActive = true;
-            }
-        }
-
         turn++;
+        StartTurn();
 
         // Debug
+
+        for (int i = 0; i < 1; i++)
+        {
+
+            var card = CardDatabase.GetRandomCard();
+            GameManager.Instance.playingCard = card;
+
+            PlayCard(card, Random.Range(0, 4));
+
+        }
+
+        playingCard = null;
         turn++;
         StartTurn();
 
@@ -406,6 +418,16 @@ public class GameManager : MonoBehaviour
 
     public void StartTurn()
     {
+
+        playingCard = null;
+        var side = turn % 2 == 0 ? player1Side : player2Side;
+        foreach (var area in side.areas)
+        {
+            foreach (var creature in area.creatures)
+            {
+                creature.isActive = true;
+            }
+        }
 
         PlayerSide currentPlayer = turn % 2 == 0 ? player1Side : player2Side;
         currentPlayer.power = turn / 2 + 3;

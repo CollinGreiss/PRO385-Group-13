@@ -8,6 +8,7 @@ public class Creature
     {
         creatureName = card.cardName;
         health = card.cardHealth;
+        maxHealth = health;
         attack = card.cardAttack;
         areaType = card.cardArea;
         currentAreaType = areaType;
@@ -17,6 +18,7 @@ public class Creature
 
     public string creatureName;
     public int health;
+    public int maxHealth;
     public int attack;
     public CardArea areaType;
     public CardArea currentAreaType = CardArea.empty;

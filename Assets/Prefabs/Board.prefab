@@ -2591,7 +2591,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 1122218584719882342, guid: 4f8427f1ac5ec8f43aec5d37cbfc9d5d,
     type: 3}
   visualRoot: {fileID: 1093500816071482201}
-  selectedCreatureIndex: 3
+  selectedCreatureIndex: -1
 --- !u!1 &5083885942760141171
 GameObject:
   m_ObjectHideFlags: 0
@@ -2796,71 +2796,85 @@ MonoBehaviour:
       type: 3}
     creatureAreaType: 1
     prefabScale: {x: 1, y: 1, z: 1}
+    creatureId: 0
   - creatureName: Golem
     creaturePrefab: {fileID: 7948002561425576607, guid: 4e8d9055a191710408e1d9e72e14b37d,
       type: 3}
     creatureAreaType: 1
     prefabScale: {x: 1, y: 1, z: 1}
+    creatureId: 0
   - creatureName: Goblin
     creaturePrefab: {fileID: 3155909186652843758, guid: 9f6717640d92e2745afbd03af3d71f0e,
       type: 3}
     creatureAreaType: 1
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: MinionSkeleton
     creaturePrefab: {fileID: 7032550197681583792, guid: 6c86312b2c3778c4791d27982756ba38,
       type: 3}
     creatureAreaType: 4
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: Skeleton
     creaturePrefab: {fileID: 7989878969553736639, guid: 58add201b4b00464cb8aa1833e6daeb1,
       type: 3}
     creatureAreaType: 4
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: FieldFighter
     creaturePrefab: {fileID: 4904906067757958009, guid: bb849fb1a85c43445b7194d407be7e9c,
       type: 3}
     creatureAreaType: 4
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: Quadruped
     creaturePrefab: {fileID: 5028197992759857610, guid: f9a8c91777df9d849951ebde1e3ac4b8,
       type: 3}
     creatureAreaType: 4
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: WarriorSkeleton
     creaturePrefab: {fileID: 111880764758315100, guid: a955979b8f30f8044beb47d2049e5bce,
       type: 3}
     creatureAreaType: 2
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: Devil
     creaturePrefab: {fileID: 3098032295913033252, guid: 1a77ded7f328add4ab96d8787d243a8f,
       type: 3}
     creatureAreaType: 2
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: MechaTrooper
     creaturePrefab: {fileID: 4012539604738816264, guid: 268c536a47bde7b4ea63c1b5c696934f,
       type: 3}
     creatureAreaType: 2
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: Arachnoid
     creaturePrefab: {fileID: 1444413181058771036, guid: 367c5af20f9deee4399607811371b8d1,
       type: 3}
     creatureAreaType: 3
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: Crab
     creaturePrefab: {fileID: 1703797159401048030, guid: 9322e1593bb0cf64e8991f924a8ff7a6,
       type: 3}
     creatureAreaType: 3
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: Turtle
     creaturePrefab: {fileID: 5072255082969086022, guid: b58679992b5b2b6499e31b12efa3adf3,
       type: 3}
     creatureAreaType: 3
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
   - creatureName: Whale
     creaturePrefab: {fileID: 7205058873528018284, guid: 231a5c5208566d2499aebacae6b4d617,
       type: 3}
     creatureAreaType: 3
     prefabScale: {x: 0.35, y: 1, z: 0.35}
+    creatureId: 0
 --- !u!114 &918901305675349661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3516,7 +3530,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 4676763484768707567, guid: da7465be533848244b6dc36869a1245d,
     type: 3}
   visualRoot: {fileID: 3921757863341140286}
-  selectedCreatureIndex: 2
+  selectedCreatureIndex: -1
 --- !u!1 &7387184368577872331
 GameObject:
   m_ObjectHideFlags: 0
@@ -3825,7 +3839,7 @@ MonoBehaviour:
   emptyPrefab: {fileID: 6257972542852269392, guid: a9277e6557afe5145aa18c0c58b11430,
     type: 3}
   visualRoot: {fileID: 595538869436077808}
-  selectedCreatureIndex: 3
+  selectedCreatureIndex: -1
 --- !u!1 &8047639415703558739
 GameObject:
   m_ObjectHideFlags: 0

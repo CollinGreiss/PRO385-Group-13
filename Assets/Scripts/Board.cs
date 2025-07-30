@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-    
+
     public PhysicalArea[] player1Areas;
     public PhysicalArea[] player2Areas;
 
@@ -33,12 +33,34 @@ public class Board : MonoBehaviour
         {
             player1Areas[i].SetAreaType(player1.areas[i].GetAreaType());
             player1Areas[i].SetCreatures(player1.areas[i].creatures);
+            foreach (Creature creature in player1.areas[i].creatures)
+            {
+                MoveCreatureVisual(creature, i, true);
+
+                CreatureVisual creatureVisual = creature.currentVisualInstance.GetComponent<CreatureVisual>();
+                if (creatureVisual == null) continue;
+
+                creatureVisual.MaxHealth = creature.maxHealth;
+                creatureVisual.Health = creature.health;
+
+            }
         }
 
         for (int i = 0; i < player2.areas.Length; i++)
         {
             player2Areas[i].SetAreaType(player2.areas[i].GetAreaType());
             player2Areas[i].SetCreatures(player2.areas[i].creatures);
+            foreach (Creature creature in player2.areas[i].creatures)
+            {
+
+                MoveCreatureVisual(creature, i, false);
+                CreatureVisual creatureVisual = creature.currentVisualInstance.GetComponent<CreatureVisual>();
+                if (creatureVisual == null) continue;
+
+                creatureVisual.MaxHealth = creature.maxHealth;
+                creatureVisual.Health = creature.health;
+
+            }
         }
 
     }
@@ -55,12 +77,28 @@ public class Board : MonoBehaviour
         PhysicalArea targetArea = isPlayer1 ? player1Areas[areaIndex] : player2Areas[areaIndex];
         Transform parent = targetArea.visualRoot != null ? targetArea.visualRoot : targetArea.transform;
 
-        GameObject instance = Instantiate(mapping.creaturePrefab, parent);
+        GameObject instance = Instantiate(mapping.creaturePrefab);
         instance.transform.localPosition = new Vector3(0, 0.5f, 0);
         instance.transform.localRotation = Quaternion.identity;
-        instance.transform.localScale = mapping.prefabScale;
+        instance.transform.SetParent(parent, true);
 
         creature.currentVisualInstance = instance;
+
+    }
+    public void MoveCreatureVisual(Creature creature, int areaIndex, bool isPlayer1)
+
+    {
+        var instance = creature.currentVisualInstance;
+        instance.transform.localPosition = new Vector3(0, 0.5f, 0);
+        instance.transform.localRotation = Quaternion.identity;
+
+        creature.currentVisualInstance = instance;
+
+
+
+        PhysicalArea targetArea = isPlayer1 ? player1Areas[areaIndex] : player2Areas[areaIndex];
+        Transform parent = targetArea.visualRoot != null ? targetArea.visualRoot : targetArea.transform;
+        creature.currentVisualInstance.transform.SetParent(parent, false);
 
     }
 
