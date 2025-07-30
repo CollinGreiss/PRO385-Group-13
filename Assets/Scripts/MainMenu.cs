@@ -27,6 +27,7 @@ public class MainMenu : MonoBehaviour
 
     public void JoinGame()
     {
+        GameManager.Instance.networkManager.StartClient();
         UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
     }
 

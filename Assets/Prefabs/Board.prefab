@@ -319,6 +319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1
+  isPlayer1: 1
   forestPrefab: {fileID: 6257972542852269392, guid: b4bf057f999383442ba6031f3314f97f,
     type: 3}
   lavaPrefab: {fileID: 6257972542852269392, guid: a80ecee07f450bd43b168b51d6b6fd25,
@@ -665,6 +666,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 3
+  isPlayer1: 0
   forestPrefab: {fileID: 6257972542852269392, guid: b4bf057f999383442ba6031f3314f97f,
     type: 3}
   lavaPrefab: {fileID: 6257972542852269392, guid: a80ecee07f450bd43b168b51d6b6fd25,
@@ -1273,6 +1275,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  isPlayer1: 0
   forestPrefab: {fileID: 6257972542852269392, guid: b4bf057f999383442ba6031f3314f97f,
     type: 3}
   lavaPrefab: {fileID: 6257972542852269392, guid: a80ecee07f450bd43b168b51d6b6fd25,
@@ -2103,6 +2106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  isPlayer1: 1
   forestPrefab: {fileID: 6257972542852269392, guid: b4bf057f999383442ba6031f3314f97f,
     type: 3}
   lavaPrefab: {fileID: 6257972542852269392, guid: a80ecee07f450bd43b168b51d6b6fd25,
@@ -2575,6 +2579,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2
+  isPlayer1: 0
   forestPrefab: {fileID: 6257972542852269392, guid: b4bf057f999383442ba6031f3314f97f,
     type: 3}
   lavaPrefab: {fileID: 6257972542852269392, guid: a80ecee07f450bd43b168b51d6b6fd25,
@@ -3327,6 +3332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1
+  isPlayer1: 0
   forestPrefab: {fileID: 6257972542852269392, guid: b4bf057f999383442ba6031f3314f97f,
     type: 3}
   lavaPrefab: {fileID: 6257972542852269392, guid: a80ecee07f450bd43b168b51d6b6fd25,
@@ -3498,6 +3504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 3
+  isPlayer1: 1
   forestPrefab: {fileID: 6257972542852269392, guid: b4bf057f999383442ba6031f3314f97f,
     type: 3}
   lavaPrefab: {fileID: 6257972542852269392, guid: a80ecee07f450bd43b168b51d6b6fd25,
@@ -3806,6 +3813,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2
+  isPlayer1: 1
   forestPrefab: {fileID: 6257972542852269392, guid: b4bf057f999383442ba6031f3314f97f,
     type: 3}
   lavaPrefab: {fileID: 6257972542852269392, guid: a80ecee07f450bd43b168b51d6b6fd25,

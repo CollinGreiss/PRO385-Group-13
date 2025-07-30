@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -72,27 +73,32 @@ public class GameManager : MonoBehaviour
 
         }
 
-        if (selectedCreature == null && hit.transform.TryGetComponent<Creature>(out Creature hitCreature))
+
+        var creature = FindCreatureByVisual(hit.transform.gameObject);
+
+        if (selectedCreature == null && creature != null)
         {
 
-            selectedCreature = hitCreature;
+            selectedCreature = creature;
             Debug.Log("Selected Creature: " + selectedCreature.creatureName);
+            return;
 
         }
         else if (selectedCreature == null) return;
 
         // Creature selected, now check for action
 
-        if (hit.transform.TryGetComponent<Creature>(out Creature targetCreature))
+        if (creature != null)
         {
 
-            GameManager.Instance.ActivateCreatureAttack(selectedCreature, targetCreature);
+            GameManager.Instance.ActivateCreatureAttack(selectedCreature, creature);
 
         }
-        else if (hit.transform.TryGetComponent<PlayerArea>(out PlayerArea targetArea))
+        else if (hit.transform.gameObject.TryGetComponent(out PhysicalArea targetArea))
         {
 
-            GameManager.Instance.ActivateCreatureMove(selectedCreature, targetArea);
+            var area = (targetArea.isPlayer1) ? player1Side.areas[targetArea.id] : player2Side.areas[targetArea.id];
+            GameManager.Instance.ActivateCreatureMove(selectedCreature, area);
 
         }
 
@@ -142,7 +148,7 @@ public class GameManager : MonoBehaviour
         if (isHost && hostIsSender) return; // If host is sending, skip processing on host side
         if (!isHost && !hostIsSender) return; // If client is sending, skip processing on client side
         OnCommandReceived(command);
-        
+
     }
 
     public void OnCommandReceived(string command)
@@ -208,6 +214,27 @@ public class GameManager : MonoBehaviour
             foreach (var creature in area.creatures)
             {
                 if (creature.id == id) return creature;
+            }
+        }
+
+        return null;
+    }
+
+    private Creature FindCreatureByVisual(GameObject visualInstance)
+    {
+        foreach (var area in player1Side.areas)
+        {
+            foreach (var creature in area.creatures)
+            {
+                if (creature.currentVisualInstance == visualInstance) return creature;
+            }
+        }
+
+        foreach (var area in player2Side.areas)
+        {
+            foreach (var creature in area.creatures)
+            {
+                if (creature.currentVisualInstance == visualInstance) return creature;
             }
         }
 
@@ -307,15 +334,17 @@ public class GameManager : MonoBehaviour
 
         SendCommand(isHost, "ActivateCreatureMove:" + creature.id + ":" + GetAreaIndex(targ));
 
-        if (GetAreaIndex(targ) == -1)
-        {
+        Debug.Log($"player1Side.areas.Contains(targ): {player1Side.areas.Contains(targ)}");
+        Debug.Log($"player2Side.areas.Contains(targ): {player2Side.areas.Contains(targ)}");
 
+
+        if (turn % 2 == 0 ? player2Side.areas.Contains(targ) : player1Side.areas.Contains(targ))
+        {
             player2Side.health -= creature.attack;
             Debug.Log($"{creature.creatureName} attacked the opponent's health directly!");
-            if (player2Side.health <= 0)
-            {
-                Debug.Log("Player 1 wins!");
-            }
+            if (player2Side.health <= 0) Debug.Log("Player 1 wins!");
+            creature.isActive = false;
+            return;
 
         }
 
@@ -323,9 +352,8 @@ public class GameManager : MonoBehaviour
         creature.currentArea = targ;
         targ.creatures.Add(creature);
         creature.currentAreaType = targ.GetAreaType();
-
-
         creature.isActive = false;
+        board.UpdateBoard();
 
     }
 
@@ -359,6 +387,15 @@ public class GameManager : MonoBehaviour
     public void EndTurn()
     {
 
+        playingCard = null;
+        foreach (var area in player1Side.areas)
+        {
+            foreach (var creature in area.creatures)
+            {
+                creature.isActive = true;
+            }
+        }
+
         turn++;
 
         // Debug
@@ -370,7 +407,7 @@ public class GameManager : MonoBehaviour
     public void StartTurn()
     {
 
-        PlayerSide currentPlayer = turn == 0 ? player1Side : player2Side;
+        PlayerSide currentPlayer = turn % 2 == 0 ? player1Side : player2Side;
         currentPlayer.power = turn / 2 + 3;
 
     }
