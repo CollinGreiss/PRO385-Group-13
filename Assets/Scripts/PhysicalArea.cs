@@ -119,7 +119,7 @@ public class PhysicalArea : MonoBehaviour
         currentCreatureInstance = Instantiate(mapping.creaturePrefab, parent);
         currentCreatureInstance.transform.localPosition = new Vector3(0, 0.5f, 0);
         currentCreatureInstance.transform.localRotation = Quaternion.identity;
-        currentCreatureInstance.transform.localScale = new Vector3(0.35f, 1f, 0.35f);
+        //currentCreatureInstance.transform.localScale = new Vector3(0.35f, 1f, 0.35f);
     }
 
 
