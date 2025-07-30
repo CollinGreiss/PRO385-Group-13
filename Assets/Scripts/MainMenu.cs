@@ -21,13 +21,12 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
-        NetworkManager.Instance.StartHost();
+        GameManager.Instance.networkManager.StartHost();
         UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
     }
 
     public void JoinGame()
     {
-        NetworkManager.Instance.StartClient();
         UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
     }
 
