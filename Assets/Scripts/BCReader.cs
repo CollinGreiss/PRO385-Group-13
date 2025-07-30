@@ -30,6 +30,7 @@ public class BCReader : MonoBehaviour
         barcodeReader.Options = new ZXing.Common.DecodingOptions
         {
             TryHarder = true,
+            TryInverted = true,
             PossibleFormats = new[] { BarcodeFormat.QR_CODE }
         };
     }
