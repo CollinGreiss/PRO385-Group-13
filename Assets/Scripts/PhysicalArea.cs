@@ -5,6 +5,7 @@ public class PhysicalArea : MonoBehaviour
 {
     private CardArea areaType;
     private List<Creature> creatures;
+    public int id;
 
     [Header("Prefabs for Each Area Type")]
     public GameObject forestPrefab;

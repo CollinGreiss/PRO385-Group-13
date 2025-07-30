@@ -7,7 +7,7 @@ public class PlayerSide
 
     public int health = 20;
     public int power = 0;
-    public PlayerArea[] areas;
+    public PlayerArea[] areas = new PlayerArea[4];
 
 }
 

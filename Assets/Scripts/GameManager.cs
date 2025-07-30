@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void CheckHit(RaycastHit hit)
+    public void CheckHit(RaycastHit hit)
     {
 
         Debug.Log("Tapped: " + hit.transform.name);
@@ -51,14 +51,15 @@ public class GameManager : MonoBehaviour
         if (playingCard != null)
         {
 
-            if (hit.transform.TryGetComponent<PlayerArea>(out PlayerArea area))
+            Debug.Log(hit.transform.name);
+
+            if (hit.transform.gameObject.TryGetComponent(out PhysicalArea area))
             {
 
-                int areaIndex = GetAreaIndex(area);
+                int areaIndex = area.id;
                 if (areaIndex == -1) return;
                 PlayCard(playingCard, areaIndex);
                 playingCard = null;
-                Debug.Log("Played card: " + playingCard.cardName);
                 board.UpdateBoard();
 
             }
@@ -102,7 +103,7 @@ public class GameManager : MonoBehaviour
         player2Side = new PlayerSide();
 
         // Initialize areas
-        for (int i = 0; i < player1Side.areas.Length; i++)
+        for (int i = 0; i < 4; i++)
         {
             player1Side.areas[i] = new PlayerArea();
             player2Side.areas[i] = new PlayerArea();
@@ -225,7 +226,7 @@ public class GameManager : MonoBehaviour
         if (side.power < card.cardCost) return;
         side.power -= card.cardCost;
 
-        NetworkManager.Instance.SendCommand($"PlayCard:{card.cardName}:{area}");
+        // NetworkManager.Instance.SendCommand($"PlayCard:{card.cardName}:{area}");
 
         switch (card.cardType)
         {
@@ -343,11 +344,9 @@ public class GameManager : MonoBehaviour
     {
 
         turn++;
-        turn %= 2;
 
         // Debug
         turn++;
-        turn %= 2;
         StartTurn();
 
     }

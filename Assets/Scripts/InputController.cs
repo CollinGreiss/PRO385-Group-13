@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,25 +26,55 @@ public class ARPlaceObject : MonoBehaviour
     void Update()
     {
 
-        if (raycastManager == null || placed) return;
+        if (raycastManager == null) return;
 
-        if (Touchscreen.current != null && Touchscreen.current.touches.Count > 0 && Touchscreen.current.touches[0].phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began && !isPlacing)
+        if (Touchscreen.current != null && Touchscreen.current.touches.Count > 0 && Touchscreen.current.touches[0].phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
         {
 
-            isPlacing = true;
             Vector2 touchPos = Touchscreen.current.touches[0].position.ReadValue();
-            PlaceObject(touchPos);
+            if (!isPlacing && !placed)
+            {
+
+                isPlacing = true;
+                PlaceObject(touchPos);
+                return;
+
+            }
+
+            Ray ray = Camera.main.ScreenPointToRay(touchPos);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+
+                Debug.Log("Hit: " + hit.transform.name);
+                GameManager.Instance.CheckHit(hit);
+
+            }
+            else Debug.Log("No hit detected");
 
         }
-        else if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && !isPlacing)
+        else if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
 
-            isPlacing = true;
             Vector2 mousePos = Mouse.current.position.ReadValue();
-            PlaceObject(mousePos);
+
+            if (!isPlacing && !placed)
+            {
+                isPlacing = true;
+                PlaceObject(mousePos);
+                return;
+            }
+
+            Ray ray = Camera.main.ScreenPointToRay(mousePos);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+                GameManager.Instance.CheckHit(hit);
+            else Debug.Log("No hit detected");
 
         }
-
+    
     }
 
 

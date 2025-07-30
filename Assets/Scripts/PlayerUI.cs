@@ -46,8 +46,7 @@ public class PlayerUI : MonoBehaviour
 
     public void endTurnButtonClicked()
     {
-        GameManager gm = GameManager.Instance;
-        if (gm != null) gm.EndTurn();
+        GameManager.Instance.EndTurn();
     }
 
     public void debugCardClicked()

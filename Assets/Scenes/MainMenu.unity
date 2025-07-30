@@ -609,7 +609,7 @@ MonoBehaviour:
   board: {fileID: 0}
   turn: -1
   isReady: 0
-  isRemoteReady: 0
+  isRemoteReady: 1
   arCam: {fileID: 0}
 --- !u!4 &690647456
 Transform:
