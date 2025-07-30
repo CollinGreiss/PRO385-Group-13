@@ -45,21 +45,21 @@ public class Board : MonoBehaviour
 
     public void PlaceCreatureVisual(Creature creature, int areaIndex, bool isPlayer1)
     {
-        if (!creaturePrefabDict.TryGetValue(creature.creatureName, out GameObject prefab))
+        var mapping = System.Array.Find(creaturePrefabs, m => m.creatureName == creature.creatureName);
+        if (mapping == null || mapping.creaturePrefab == null)
         {
-            Debug.LogWarning($"No prefab assigned for creature: {creature.creatureName}");
+            Debug.LogWarning($"Missing prefab for {creature.creatureName}");
             return;
         }
 
         PhysicalArea targetArea = isPlayer1 ? player1Areas[areaIndex] : player2Areas[areaIndex];
-
-        // Instantiate under the visual root or default
         Transform parent = targetArea.visualRoot != null ? targetArea.visualRoot : targetArea.transform;
-        GameObject instance = Instantiate(prefab, parent);
 
-        // Optionally position it nicely
-        instance.transform.localPosition = new Vector3(0, 0.5f, 0); // adjust height or layout
+        GameObject instance = Instantiate(mapping.creaturePrefab, parent);
+        instance.transform.localPosition = new Vector3(0, 0.5f, 0);
         instance.transform.localRotation = Quaternion.identity;
+        instance.transform.localScale = mapping.prefabScale;
     }
+
 
 }
