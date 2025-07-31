@@ -9,7 +9,7 @@
 
 ## Project Overview
 
-**AR Card Wars** is an augmented reality experience inspired by *Card Wars* from *Adventure Time*. This game combines physical trading cards with immersive digital gameplay. Players scan physical cards using a mobile device, bringing creatures and spells to life in AR.
+**Card Conflicts** is an augmented reality experience inspired by *Card Wars* from *Adventure Time*. This game combines physical trading cards with immersive digital gameplay. Players scan physical cards using a mobile device, bringing creatures and spells to life in AR.
 
 The app handles all core gameplay logic—such as turn structure, player health, and card effects—while physical cards serve as anchors in the real world, enhancing immersion. The result is a fully interactive, highly visual game that bridges physical and digital play.
 
